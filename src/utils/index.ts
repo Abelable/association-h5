@@ -55,7 +55,7 @@ export const useCheckLogin = () => {
 export const formatNumber = (n: number) => (n.toString()[1] ? n : "0" + n);
 
 export const debounce = (fn: () => void, delay: number) => {
-  let timer: any = null;
+  let timer = 0;
   return function () {
     if (timer) clearTimeout(timer);
     timer = setTimeout(fn, delay);

@@ -40,4 +40,7 @@ const setCourseList = async (init = false) => {
 };
 </script>
 
-<style lang="stylus" scoped></style>
+<style lang="stylus" scoped>
+.list-wrap
+  padding 0 .3rem
+</style>
