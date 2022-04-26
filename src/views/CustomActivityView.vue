@@ -1,5 +1,5 @@
 <template>
-  <NavBar :title="activityDetail?.title" />
+  <NavBar :title="activityDetail?.title" fixed />
   <div class="form-wrap">
     <div
       class="form-item"
@@ -15,12 +15,46 @@
         v-if="item.type === 1"
         :placeholder="`请输入${item.name}`"
       />
+      <textarea
+        class="textarea"
+        v-if="item.type === 2"
+        :placeholder="`请输入${item.name}`"
+      ></textarea>
+      <input
+        class="input"
+        type="number"
+        v-if="item.type === 3"
+        :placeholder="`请输入${item.name}`"
+      />
+      <RadioGroup class="radio-group" v-if="item.type === 4">
+        <Radio
+          class="radio"
+          v-for="(_item, _index) in item.options"
+          :key="_index"
+          :name="_item"
+          >{{ _item }}</Radio
+        >
+      </RadioGroup>
+      <CheckboxGroup class="checkbox-group" v-if="item.type === 5">
+        <Checkbox
+          class="checkbox"
+          v-for="(_item, _index) in item.options"
+          :key="_index"
+          :name="_item"
+          >{{ _item }}</Checkbox
+        >
+      </CheckboxGroup>
+      <Uploader class="uploader" v-if="item.type === 6" />
     </div>
   </div>
   <div class="submit-btn">提交</div>
   <div class="remark" v-if="activityDetail?.remark">
     <div class="title">填表须知</div>
     <div class="content" v-html="activityDetail?.remark"></div>
+  </div>
+  <div class="youbo-logo-wrap">
+    <img class="youbo-logo" src="@/assets/images/youbo-logo.png" />
+    <div class="youbo-logo-tips">有播提供技术支持</div>
   </div>
 </template>
 
@@ -34,7 +68,15 @@
   ]; -->
 
 <script setup lang="ts">
-import { NavBar, Toast } from "vant";
+import {
+  NavBar,
+  Toast,
+  RadioGroup,
+  Radio,
+  CheckboxGroup,
+  Checkbox,
+  Uploader,
+} from "vant";
 import { onMounted, ref } from "vue";
 
 import {
@@ -66,6 +108,7 @@ const setActivityDetail = async () => {
 
 <style lang="stylus" scoped>
 .form-wrap
+  margin-top: 46px
   background: #fff
   .form-item
     padding: .24rem .36rem
@@ -86,9 +129,29 @@ const setActivityDetail = async () => {
           color: #FF3838
           content: "*"
           font-weight: bold
+    .input, .textarea
+      margin-top .12rem
+      padding .15rem
+      font-size .28rem
+      background #f4f4f4
+      border none
+      border-radius .1rem
     .input
-      margin-top: .20rem
+      width 6.8rem
+      height .8rem
+    .textarea
+      width 6.5rem
+      height 2rem
+    .radio-group
       font-size: .28rem
+      .radio
+        margin-top: .20rem
+    .checkbox-group
+      font-size: .28rem
+      .checkbox
+        margin-top: .20rem
+    .uploader
+      margin-top: .20rem
 .submit-btn
   margin: .50rem .88rem
   height: .96rem
@@ -119,6 +182,17 @@ const setActivityDetail = async () => {
     padding: .30rem
     font-size: .28rem
     background: #fff
+.youbo-logo-wrap
+  padding: .30rem 0
+  font-size: 0
+  text-align: center
+  .youbo-logo
+    width: 1.20rem
+    height: .28rem
+  .youbo-logo-tips
+    margin-top: .06rem
+    color: #999
+    font-size: .18rem
 </style>
 <style lang="stylus">
 .van-nav-bar__content
