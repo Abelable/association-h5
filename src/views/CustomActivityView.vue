@@ -136,6 +136,17 @@ const submit = async () => {
     return;
   }
   Toast.loading({ message: "提交中..." });
+  const enterFromList = activityDetail.value?.enterFromList || [];
+  for (let index = 0; index < enterFromList.length; index++) {
+    if (enterFromList[index].type === 5) {
+      submitData.value[index].value = submitData.value[index].value.join();
+    }
+    if (enterFromList[index].type === 6) {
+      const [url = ""] =
+        (await uploadFile(submitData.value[index].value[0].content)) || [];
+      submitData.value[index].value = url;
+    }
+  }
   await submitForm(id, JSON.stringify(submitData));
   Toast("报名成功");
 };
