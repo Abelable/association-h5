@@ -55,10 +55,15 @@
           >{{ _item }}</Checkbox
         >
       </CheckboxGroup>
-      <Uploader class="uploader" v-if="item.type === 6" />
+      <Uploader
+        class="uploader"
+        v-model="submitData[index].value"
+        v-if="item.type === 6"
+        max-count="1"
+      />
     </div>
   </div>
-  <div class="submit-btn">提交</div>
+  <div class="submit-btn" @click="submit">提交</div>
   <div class="remark" v-if="activityDetail?.remark">
     <div class="title">填表须知</div>
     <div class="content" v-html="activityDetail?.remark"></div>
@@ -69,16 +74,8 @@
   </div>
 </template>
 
-<!-- const typeOptions = [
-    { id: 1, name: "单行文本框" },
-    { id: 2, name: "多行文本框" },
-    { id: 3, name: "数字输入框" },
-    { id: 4, name: "单选按钮框" },
-    { id: 5, name: "多选按钮框" },
-    { id: 6, name: "图片上传框" },
-  ]; -->
-
 <script setup lang="ts">
+import { getUrlParam } from "@/utils";
 import {
   NavBar,
   Toast,
@@ -94,8 +91,11 @@ import {
   ActivityInfo,
   enterFromItem,
   getActivityDetail,
+  uploadFile,
+  submitForm,
 } from "../service/customActivity";
 
+const id = getUrlParam("id");
 const activityDetail = ref<ActivityInfo>();
 const submitData = ref<{ name: string; value: any }[]>([]);
 
@@ -103,7 +103,7 @@ onMounted(() => setActivityDetail());
 
 const setActivityDetail = async () => {
   Toast.loading({ message: "加载中..." });
-  const { enter_from_json, ...resData } = await getActivityDetail("11");
+  const { enter_from_json, ...resData } = await getActivityDetail(id);
   Toast.clear();
   const enterFromList: enterFromItem[] = JSON.parse(enter_from_json);
   activityDetail.value = {
@@ -114,6 +114,30 @@ const setActivityDetail = async () => {
     name: item.name,
     value: undefined,
   }));
+};
+
+const submit = async () => {
+  const missMsgList: string[] = [];
+  activityDetail.value?.enterFromList.forEach(async (item, index) => {
+    if (item.required) {
+      const dataItem = submitData.value.find(
+        (_item) => _item.name === item.name
+      );
+      if (!dataItem?.value) missMsgList.push(`${item.name}不能为空`);
+    }
+    if (item.type === 6 && typeof submitData.value[index].value !== "string") {
+      const [url = ""] =
+        (await uploadFile(submitData.value[index].value[0].content)) || [];
+      submitData.value[index].value = url;
+    }
+  });
+  if (missMsgList.length) {
+    Toast(missMsgList[0]);
+    return;
+  }
+  Toast.loading({ message: "提交中..." });
+  await submitForm(id, JSON.stringify(submitData));
+  Toast("报名成功");
 };
 </script>
 

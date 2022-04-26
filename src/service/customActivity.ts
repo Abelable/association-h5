@@ -28,3 +28,18 @@ export const getActivityDetail = async (
     })) || {};
   return activityDetail;
 };
+
+export const uploadFile = async (content: string): Promise<string[]> =>
+  await http("/api/v4/user/material", {
+    method: "POST",
+    data: { "file[content]": content, wxmini: -1 },
+  });
+
+export const submitForm = async (
+  custom_event_id: string,
+  apply_content_json: string
+) =>
+  await http("/api/v1/enter-apply/custom-event-apply", {
+    method: "POST",
+    data: { custom_event_id, apply_content_json },
+  });

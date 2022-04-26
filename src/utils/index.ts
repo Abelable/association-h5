@@ -61,3 +61,10 @@ export const debounce = (fn: () => void, delay: number) => {
     timer = setTimeout(fn, delay);
   };
 };
+
+export const getUrlParam = (name: string) => {
+  const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+  const r = window.location.search.substr(1).match(reg);
+  if (r) return decodeURIComponent(r[2]);
+  return "";
+};

@@ -1,6 +1,7 @@
 import qs from "qs";
 
 const apiUrl = process.env.VUE_APP_API_URL;
+const youboUrl = process.env.VUE_APP_YOUBO_URL;
 
 interface Config extends RequestInit {
   data?: object;
@@ -22,19 +23,17 @@ export const http = async (
   };
 
   if (config.method.toUpperCase() === "GET") {
-    if (endpoint.includes("?r=")) {
-      endpoint += `${qs.stringify(data)}`;
-    } else {
-      endpoint += `?${qs.stringify(data)}`;
-    }
+    endpoint += `?${qs.stringify(data)}`;
   } else {
     config.body = qs.stringify(data || {});
   }
 
-  return window.fetch(`${apiUrl}${endpoint}`, config).then(async (response) => {
-    const data = await response.json();
-    if (response.ok && (data.code === 1001 || data.code === "200"))
-      return data.data;
-    else return Promise.reject(data);
-  });
+  return window
+    .fetch(`${endpoint.includes("v4") ? youboUrl : apiUrl}${endpoint}`, config)
+    .then(async (response) => {
+      const data = await response.json();
+      if (response.ok && (data.code === 1001 || data.code === "200"))
+        return data.data;
+      else return Promise.reject(data);
+    });
 };
