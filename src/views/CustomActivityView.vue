@@ -2,6 +2,15 @@
   <NavBar :title="activityDetail?.title" />
 </template>
 
+<!-- const typeOptions = [
+    { id: 1, name: "单行文本框" },
+    { id: 2, name: "多行文本框" },
+    { id: 3, name: "数字输入框" },
+    { id: 4, name: "单选按钮框" },
+    { id: 5, name: "多选按钮框" },
+    { id: 6, name: "图片上传框" },
+  ]; -->
+
 <script setup lang="ts">
 import { NavBar } from "vant";
 import { onMounted, ref } from "vue";
