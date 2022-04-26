@@ -5,7 +5,17 @@
       class="form-item"
       v-for="(item, index) in activityDetail?.enterFromList"
       :key="index"
-    ></div>
+    >
+      <div class="title" :class="{ required: item.required }">
+        <span>{{ item.name }}</span>
+        <span v-if="item.type === 5">（可多选）</span>
+      </div>
+      <input
+        class="input"
+        v-if="item.type === 1"
+        :placeholder="`请输入${item.name}`"
+      />
+    </div>
   </div>
   <div class="submit-btn">提交</div>
   <div class="remark" v-if="activityDetail?.remark">
@@ -58,10 +68,27 @@ const setActivityDetail = async () => {
 .form-wrap
   background: #fff
   .form-item
-    padding: .20rem .30rem
+    padding: .24rem .36rem
+    font-size: 0
     border-bottom: 1px solid #f7f7f7
     &:last-child
       border-bottom: none
+    .title
+      color: #333
+      font-size: .32rem
+      font-weight: bold
+      &.required
+        position relative
+        &::before
+          position: absolute
+          top: .02rem
+          left: -0.2rem
+          color: #FF3838
+          content: "*"
+          font-weight: bold
+    .input
+      margin-top: .20rem
+      font-size: .28rem
 .submit-btn
   margin: .50rem .88rem
   height: .96rem
@@ -92,4 +119,10 @@ const setActivityDetail = async () => {
     padding: .30rem
     font-size: .28rem
     background: #fff
+</style>
+<style lang="stylus">
+.van-nav-bar__content
+  background: linear-gradient(180deg, #3FABFB 0%, #317BFF 100%)
+  .van-nav-bar__title.van-ellipsis
+    color: #fff
 </style>
