@@ -1,11 +1,15 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import CourseView from "../views/CourseView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/course",
     name: "course",
-    component: CourseView,
+    component: () => import("../views/CourseView.vue"),
+  },
+  {
+    path: "/custom_activity",
+    name: "custom_activity",
+    component: () => import("../views/CustomActivityView.vue"),
   },
 ];
 

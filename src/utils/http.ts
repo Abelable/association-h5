@@ -33,7 +33,8 @@ export const http = async (
 
   return window.fetch(`${apiUrl}${endpoint}`, config).then(async (response) => {
     const data = await response.json();
-    if (response.ok && data.code === 1001) return data.data;
+    if (response.ok && (data.code === 1001 || data.code === "200"))
+      return data.data;
     else return Promise.reject(data);
   });
 };
