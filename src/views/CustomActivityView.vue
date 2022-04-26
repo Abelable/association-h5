@@ -13,20 +13,27 @@
       <input
         class="input"
         v-if="item.type === 1"
+        v-model="submitData[index].value"
         :placeholder="`请输入${item.name}`"
       />
       <textarea
         class="textarea"
         v-if="item.type === 2"
+        v-model="submitData[index].value"
         :placeholder="`请输入${item.name}`"
-      ></textarea>
+      />
       <input
         class="input"
         type="number"
         v-if="item.type === 3"
+        v-model="submitData[index].value"
         :placeholder="`请输入${item.name}`"
       />
-      <RadioGroup class="radio-group" v-if="item.type === 4">
+      <RadioGroup
+        class="radio-group"
+        v-if="item.type === 4"
+        v-model="submitData[index].value"
+      >
         <Radio
           class="radio"
           v-for="(_item, _index) in item.options"
@@ -35,7 +42,11 @@
           >{{ _item }}</Radio
         >
       </RadioGroup>
-      <CheckboxGroup class="checkbox-group" v-if="item.type === 5">
+      <CheckboxGroup
+        class="checkbox-group"
+        v-if="item.type === 5"
+        v-model="submitData[index].value"
+      >
         <Checkbox
           class="checkbox"
           v-for="(_item, _index) in item.options"
@@ -86,7 +97,7 @@ import {
 } from "../service/customActivity";
 
 const activityDetail = ref<ActivityInfo>();
-const submitData = ref<{ name: string; value: unknown }[]>([]);
+const submitData = ref<{ name: string; value: any }[]>([]);
 
 onMounted(() => setActivityDetail());
 
