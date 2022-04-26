@@ -2,6 +2,7 @@ const { merge } = require("webpack-merge");
 const tsImportPluginFactory = require("ts-import-plugin");
 
 module.exports = {
+  publicPath: "./",
   parallel: false,
   chainWebpack: (config) => {
     config.module
