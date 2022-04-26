@@ -98,7 +98,7 @@ import {
 
 const id = getUrlParam("id");
 const activityDetail = ref<ActivityInfo>();
-const submitData = ref<{ name: string; value: any }[]>([]);
+const submitData = ref<{ title: string; name: string; value: any }[]>([]);
 
 onMounted(() => setActivityDetail());
 
@@ -111,25 +111,37 @@ const setActivityDetail = async () => {
     enterFromList,
     ...resData,
   };
-  submitData.value = enterFromList.map((item) => ({
-    name: item.name,
-    value: undefined,
-  }));
+  submitData.value = enterFromList.map((item) => {
+    let unit: { title: string; name: string; value: any };
+    switch (item.name) {
+      case "姓名":
+        unit = { title: item.name, name: "name", value: undefined };
+        break;
+      case "手机号":
+        unit = { title: item.name, name: "mobile", value: undefined };
+        break;
+      case "邮箱":
+        unit = { title: item.name, name: "email", value: undefined };
+        break;
+      default:
+        unit = { title: item.name, name: "", value: undefined };
+        break;
+    }
+    return unit;
+  });
 };
 
 const submit = async () => {
+  const cloneEnterFromList = _.cloneDeep(activityDetail.value?.enterFromList);
+  const cloneSubmitData = _.cloneDeep(submitData.value);
+
   const missMsgList: string[] = [];
-  activityDetail.value?.enterFromList.forEach(async (item, index) => {
+  (cloneEnterFromList as enterFromItem[]).forEach(async (item) => {
     if (item.required) {
-      const dataItem = submitData.value.find(
-        (_item) => _item.name === item.name
+      const dataItem = cloneSubmitData.find(
+        (_item) => _item.title === item.name
       );
       if (!dataItem?.value) missMsgList.push(`${item.name}不能为空`);
-    }
-    if (item.type === 6 && typeof submitData.value[index].value !== "string") {
-      const [url = ""] =
-        (await uploadFile(submitData.value[index].value[0].content)) || [];
-      submitData.value[index].value = url;
     }
   });
   if (missMsgList.length) {
@@ -138,19 +150,26 @@ const submit = async () => {
   }
   Toast.loading({ message: "提交中..." });
 
-  const data = _.cloneDeep(submitData.value);
-  const enterFromList = activityDetail.value?.enterFromList || [];
-  for (let index = 0; index < enterFromList.length; index++) {
-    if (enterFromList[index].type === 5) {
-      data[index].value = data[index].value.join();
+  for (
+    let index = 0;
+    index < (cloneEnterFromList as enterFromItem[]).length;
+    index++
+  ) {
+    if ((cloneEnterFromList as enterFromItem[])[index].type === 5) {
+      cloneSubmitData[index].value = cloneSubmitData[index].value.join();
     }
-    if (enterFromList[index].type === 6) {
-      const [url = ""] = (await uploadFile(data[index].value[0].content)) || [];
-      data[index].value = url;
+    if ((cloneEnterFromList as enterFromItem[])[index].type === 6) {
+      const [url = ""] =
+        (await uploadFile(cloneSubmitData[index].value[0].content)) || [];
+      cloneSubmitData[index].value = url;
     }
   }
-  await submitForm(id, JSON.stringify(data));
-  Toast("报名成功");
+  try {
+    await submitForm(id, JSON.stringify(cloneSubmitData));
+    Toast("报名成功");
+  } catch (error) {
+    Toast((error as { message: string })?.message);
+  }
 };
 </script>
 
