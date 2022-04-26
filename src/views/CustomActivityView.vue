@@ -1,5 +1,10 @@
 <template>
   <NavBar :title="activityDetail?.title" />
+  <div class="submit-btn">提交</div>
+  <div class="remark" v-if="activityDetail?.remark">
+    <div class="title">填表须知</div>
+    <div class="content" v-html="activityDetail?.remark"></div>
+  </div>
 </template>
 
 <!-- const typeOptions = [
@@ -22,7 +27,7 @@ const activityDetail = ref<ActivityInfo>();
 onMounted(() => setActivityDetail());
 
 const setActivityDetail = async () => {
-  const { enter_from_json, ...resData } = await getActivityDetail("9");
+  const { enter_from_json, ...resData } = await getActivityDetail("11");
   activityDetail.value = {
     enterFromList: JSON.parse(enter_from_json),
     ...resData,
@@ -31,6 +36,34 @@ const setActivityDetail = async () => {
 </script>
 
 <style lang="stylus" scoped>
-.list-wrap
-  padding 0 .3rem
+.submit-btn
+  margin: .50rem .88rem
+  height: .96rem
+  color: #fff
+  font-size: .36rem
+  font-weight: bold
+  text-align: center
+  line-height: .96rem
+  border-radius: .48rem
+  background: linear-gradient(180deg, #3FABFB 0%, #317BFF 100%)
+.remark
+  .title
+    position: relative
+    margin-left: .30rem
+    color: #333
+    font-size: .32rem
+    font-weight: bold
+    &::after
+      position: absolute
+      left: 0
+      bottom: 0
+      width: .64rem
+      height: .08rem
+      content: ''
+      background: #408BF1
+  .content
+    margin-top: .20rem
+    padding: .30rem
+    font-size: .28rem
+    background: #fff
 </style>

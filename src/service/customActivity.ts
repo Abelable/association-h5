@@ -12,7 +12,6 @@ export interface enterFromItem {
   type: number | undefined;
   required: boolean;
   name: string;
-  tips: string;
   options: string[] | undefined;
 }
 
