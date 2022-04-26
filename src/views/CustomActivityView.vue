@@ -112,7 +112,7 @@ const setActivityDetail = async () => {
     ...resData,
   };
   submitData.value = enterFromList.map((item) => {
-    let unit: { title: string; name: string; value: any };
+    let unit: { title: string; name: string; value: undefined };
     switch (item.name) {
       case "姓名":
         unit = { title: item.name, name: "name", value: undefined };
