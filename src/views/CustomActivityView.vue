@@ -144,6 +144,7 @@ const submit = async () => {
 <style lang="stylus" scoped>
 .form-wrap
   margin-top: 46px
+  min-height: 10vh
   background: #fff
   .form-item
     padding: .24rem .36rem
