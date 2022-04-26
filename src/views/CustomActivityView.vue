@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { getUrlParam } from "@/utils";
+import { onMounted, ref } from "vue";
 import {
   NavBar,
   Toast,
@@ -85,7 +85,8 @@ import {
   Checkbox,
   Uploader,
 } from "vant";
-import { onMounted, ref } from "vue";
+import _ from "lodash";
+import { getUrlParam } from "@/utils";
 
 import {
   ActivityInfo,
@@ -136,18 +137,19 @@ const submit = async () => {
     return;
   }
   Toast.loading({ message: "提交中..." });
+
+  const data = _.cloneDeep(submitData.value);
   const enterFromList = activityDetail.value?.enterFromList || [];
   for (let index = 0; index < enterFromList.length; index++) {
     if (enterFromList[index].type === 5) {
-      submitData.value[index].value = submitData.value[index].value.join();
+      data[index].value = data[index].value.join();
     }
     if (enterFromList[index].type === 6) {
-      const [url = ""] =
-        (await uploadFile(submitData.value[index].value[0].content)) || [];
-      submitData.value[index].value = url;
+      const [url = ""] = (await uploadFile(data[index].value[0].content)) || [];
+      data[index].value = url;
     }
   }
-  await submitForm(id, JSON.stringify(submitData));
+  await submitForm(id, JSON.stringify(data));
   Toast("报名成功");
 };
 </script>
