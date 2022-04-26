@@ -1,5 +1,12 @@
 <template>
   <NavBar :title="activityDetail?.title" />
+  <div class="form-wrap">
+    <div
+      class="form-item"
+      v-for="(item, index) in activityDetail?.enterFromList"
+      :key="index"
+    ></div>
+  </div>
   <div class="submit-btn">提交</div>
   <div class="remark" v-if="activityDetail?.remark">
     <div class="title">填表须知</div>
@@ -17,25 +24,44 @@
   ]; -->
 
 <script setup lang="ts">
-import { NavBar } from "vant";
+import { NavBar, Toast } from "vant";
 import { onMounted, ref } from "vue";
 
-import { ActivityInfo, getActivityDetail } from "../service/customActivity";
+import {
+  ActivityInfo,
+  enterFromItem,
+  getActivityDetail,
+} from "../service/customActivity";
 
 const activityDetail = ref<ActivityInfo>();
+const submitData = ref<{ name: string; value: unknown }[]>([]);
 
 onMounted(() => setActivityDetail());
 
 const setActivityDetail = async () => {
+  Toast.loading({ message: "加载中..." });
   const { enter_from_json, ...resData } = await getActivityDetail("11");
+  Toast.clear();
+  const enterFromList: enterFromItem[] = JSON.parse(enter_from_json);
   activityDetail.value = {
-    enterFromList: JSON.parse(enter_from_json),
+    enterFromList,
     ...resData,
   };
+  submitData.value = enterFromList.map((item) => ({
+    name: item.name,
+    value: undefined,
+  }));
 };
 </script>
 
 <style lang="stylus" scoped>
+.form-wrap
+  background: #fff
+  .form-item
+    padding: .20rem .30rem
+    border-bottom: 1px solid #f7f7f7
+    &:last-child
+      border-bottom: none
 .submit-btn
   margin: .50rem .88rem
   height: .96rem
