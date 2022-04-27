@@ -267,4 +267,6 @@ const submit = async () => {
   background: linear-gradient(180deg, #3FABFB 0%, #317BFF 100%)
   .van-nav-bar__title.van-ellipsis
     color: #fff
+img
+  width: 100%
 </style>
