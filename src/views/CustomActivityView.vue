@@ -168,7 +168,21 @@ const submit = async () => {
       const dataItem = cloneSubmitData.find(
         (_item) => _item.title === item.name
       );
-      if (!dataItem?.value) missMsgList.push(`${item.name}不能为空`);
+      if (!dataItem?.value) {
+        missMsgList.push(`${item.name}不能为空`);
+      } else if (
+        item.name.includes("手机") &&
+        !/^[1][3,4,5,7,8][0-9]{9}$/.test(dataItem?.value)
+      ) {
+        missMsgList.push("请输入正确手机号");
+      } else if (
+        item.name.includes("邮箱") &&
+        !/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(
+          dataItem?.value
+        )
+      ) {
+        missMsgList.push("请输入正确的邮箱地址");
+      }
     }
   });
   if (missMsgList.length) {
