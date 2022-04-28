@@ -107,7 +107,6 @@ onMounted(() => setActivityDetail());
 const setActivityDetail = async () => {
   Toast.loading({ message: "加载中..." });
   const { enter_from_json, title, ...resData } = await getActivityDetail(id);
-  Toast.clear();
   wx.miniProgram.getEnv((res) => {
     if (res.miniprogram) {
       navBarVisible.value = false;
@@ -138,6 +137,7 @@ const setActivityDetail = async () => {
     }
     return unit;
   });
+  Toast.clear();
 };
 
 const submit = async () => {
