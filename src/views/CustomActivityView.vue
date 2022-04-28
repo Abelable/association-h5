@@ -86,7 +86,6 @@ import {
   Uploader,
 } from "vant";
 
-import wx from "weixin-js-sdk-ts";
 import _ from "lodash";
 import { getUrlParam } from "@/utils";
 import {
@@ -103,9 +102,7 @@ const activityDetail = ref<ActivityInfo>();
 const submitData = ref<{ title: string; name: string; value: any }[]>([]);
 
 onMounted(() => {
-  wx.miniProgram.getEnv((res: any) => {
-    if (!res.miniprogram) navBarVisible.value = true;
-  });
+  if (!(window as any).__wxjs_environment) navBarVisible.value = true;
   setActivityDetail();
 });
 
