@@ -1,76 +1,88 @@
 <template>
   <NavBar v-if="navBarVisible" :title="activityDetail?.title" fixed />
-  <div class="form-wrap" :class="{ 'show-navbar': navBarVisible }">
-    <div
-      class="form-item"
-      v-for="(item, index) in activityDetail?.enterFromList"
-      :key="index"
-    >
-      <div class="title" :class="{ required: item.required }">
-        <span>{{ item.name }}</span>
-        <span v-if="item.type === 5">（可多选）</span>
+  <div v-if="step === 1">
+    <div class="form-wrap" :class="{ 'show-navbar': navBarVisible }">
+      <div
+        class="form-item"
+        v-for="(item, index) in activityDetail?.enterFromList"
+        :key="index"
+      >
+        <div class="title" :class="{ required: item.required }">
+          <span>{{ item.name }}</span>
+          <span v-if="item.type === 5">（可多选）</span>
+        </div>
+        <input
+          class="input"
+          v-if="item.type === 1"
+          v-model="submitData[index].value"
+          :placeholder="`请输入${item.name}`"
+        />
+        <textarea
+          class="textarea"
+          v-if="item.type === 2"
+          v-model="submitData[index].value"
+          :placeholder="`请输入${item.name}`"
+        />
+        <input
+          class="input"
+          type="number"
+          v-if="item.type === 3"
+          v-model="submitData[index].value"
+          :placeholder="`请输入${item.name}`"
+        />
+        <RadioGroup
+          class="radio-group"
+          v-if="item.type === 4"
+          v-model="submitData[index].value"
+        >
+          <Radio
+            class="radio"
+            v-for="(_item, _index) in item.options"
+            :key="_index"
+            :name="_item"
+            >{{ _item }}</Radio
+          >
+        </RadioGroup>
+        <CheckboxGroup
+          class="checkbox-group"
+          v-if="item.type === 5"
+          v-model="submitData[index].value"
+        >
+          <Checkbox
+            class="checkbox"
+            v-for="(_item, _index) in item.options"
+            :key="_index"
+            :name="_item"
+            >{{ _item }}</Checkbox
+          >
+        </CheckboxGroup>
+        <Uploader
+          class="uploader"
+          v-model="submitData[index].value"
+          v-if="item.type === 6"
+          max-count="1"
+        />
       </div>
-      <input
-        class="input"
-        v-if="item.type === 1"
-        v-model="submitData[index].value"
-        :placeholder="`请输入${item.name}`"
-      />
-      <textarea
-        class="textarea"
-        v-if="item.type === 2"
-        v-model="submitData[index].value"
-        :placeholder="`请输入${item.name}`"
-      />
-      <input
-        class="input"
-        type="number"
-        v-if="item.type === 3"
-        v-model="submitData[index].value"
-        :placeholder="`请输入${item.name}`"
-      />
-      <RadioGroup
-        class="radio-group"
-        v-if="item.type === 4"
-        v-model="submitData[index].value"
-      >
-        <Radio
-          class="radio"
-          v-for="(_item, _index) in item.options"
-          :key="_index"
-          :name="_item"
-          >{{ _item }}</Radio
-        >
-      </RadioGroup>
-      <CheckboxGroup
-        class="checkbox-group"
-        v-if="item.type === 5"
-        v-model="submitData[index].value"
-      >
-        <Checkbox
-          class="checkbox"
-          v-for="(_item, _index) in item.options"
-          :key="_index"
-          :name="_item"
-          >{{ _item }}</Checkbox
-        >
-      </CheckboxGroup>
-      <Uploader
-        class="uploader"
-        v-model="submitData[index].value"
-        v-if="item.type === 6"
-        max-count="1"
-      />
+    </div>
+    <div class="submit-btn" @click="submit">提交</div>
+    <div class="remark" v-if="activityDetail?.remark">
+      <div class="title">填表须知</div>
+      <div class="content" v-html="activityDetail?.remark"></div>
+    </div>
+    <div class="youbo-logo-wrap">
+      <img class="youbo-logo" src="@/assets/images/youbo-logo.png" />
+      <div class="youbo-logo-tips">有播提供技术支持</div>
     </div>
   </div>
-  <div class="submit-btn" @click="submit">提交</div>
-  <div class="remark" v-if="activityDetail?.remark">
-    <div class="title">填表须知</div>
-    <div class="content" v-html="activityDetail?.remark"></div>
+  <div class="success" v-if="step === 2">
+    <img class="icon" src="@/assets/images/success.png" alt="" />
+    <div class="icon-desc">报名成功</div>
+    <div class="continue-btn" @click="reapply">继续报名</div>
   </div>
-  <div class="youbo-logo-wrap">
-    <img class="youbo-logo" src="@/assets/images/youbo-logo.png" />
-    <div class="youbo-logo-tips">有播提供技术支持</div>
+  <div class="error" v-if="step === 3">
+    <img class="icon" src="@/assets/images/error.png" alt="" />
+    <div class="icon-desc">报名失败</div>
+    <div class="tips">{{ errMsg }}</div>
   </div>
 </template>
 
@@ -99,6 +111,8 @@ import {
 
 const id = getUrlParam("id");
 const navBarVisible = ref(true);
+const step = ref(1);
+const errMsg = ref("");
 const activityDetail = ref<ActivityInfo>();
 const submitData = ref<{ title: string; name: string; value: any }[]>([]);
 
@@ -119,7 +133,12 @@ const setActivityDetail = async () => {
     title,
     ...resData,
   };
-  submitData.value = enterFromList.map((item) => {
+  initSubmitData(enterFromList);
+  Toast.clear();
+};
+
+const initSubmitData = (list: enterFromItem[]) => {
+  submitData.value = list.map((item) => {
     let unit: { title: string; name: string; value: undefined };
     switch (item.name) {
       case "姓名":
@@ -137,7 +156,6 @@ const setActivityDetail = async () => {
     }
     return unit;
   });
-  Toast.clear();
 };
 
 const submit = async () => {
@@ -175,10 +193,21 @@ const submit = async () => {
   }
   try {
     await submitForm(id, JSON.stringify(cloneSubmitData));
-    Toast("报名成功");
+    Toast.clear();
+    step.value = 2;
   } catch (error) {
-    Toast((error as { message: string })?.message);
+    Toast.clear();
+    step.value = 3;
+    const msg = (error as { data: { EnterFrom: string[] } })?.data.EnterFrom[0];
+    if (msg === "你已经报名") {
+      errMsg.value = "您已报名过此活动，请不要重复报名";
+    } else errMsg.value = msg;
   }
+};
+
+const reapply = () => {
+  initSubmitData(activityDetail.value?.enterFromList || []);
+  step.value = 1;
 };
 </script>
 
@@ -271,6 +300,36 @@ const submit = async () => {
     margin-top: .06rem
     color: #999
     font-size: .18rem
+.success, .error
+  display flex
+  flex-direction: column
+  align-items: center
+  height 100vh
+  background #fff
+  .icon
+    margin-top 2rem
+    width 1.4rem
+    height 1.4rem
+  .icon-desc
+    margin-top .5rem
+    color: #333
+    font-size .32rem
+    font-weight: bold
+  .tips
+    margin-top .24rem
+    color: #666
+    font-size: .24rem
+  .continue-btn
+    margin-top 2.3rem
+    width: 4.28rem
+    height: .9rem
+    color: #fff
+    font-size: .32rem
+    font-weight: bold
+    text-align: center
+    line-height: .9rem
+    background: linear-gradient(180deg, #3FABFB 0%, #317BFF 100%)
+    border-radius: .45rem
 </style>
 <style lang="stylus">
 .van-nav-bar__content
