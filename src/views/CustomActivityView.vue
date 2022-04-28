@@ -102,20 +102,22 @@ const navBarVisible = ref(true);
 const activityDetail = ref<ActivityInfo>();
 const submitData = ref<{ title: string; name: string; value: any }[]>([]);
 
-onMounted(() => {
-  wx.miniProgram.getEnv((res) => {
-    if (res.miniprogram) navBarVisible.value = false;
-  });
-  setActivityDetail();
-});
+onMounted(() => setActivityDetail());
 
 const setActivityDetail = async () => {
   Toast.loading({ message: "加载中..." });
-  const { enter_from_json, ...resData } = await getActivityDetail(id);
+  const { enter_from_json, title, ...resData } = await getActivityDetail(id);
   Toast.clear();
+  wx.miniProgram.getEnv((res) => {
+    if (res.miniprogram) {
+      navBarVisible.value = false;
+      document.title = title;
+    }
+  });
   const enterFromList: enterFromItem[] = JSON.parse(enter_from_json);
   activityDetail.value = {
     enterFromList,
+    title,
     ...resData,
   };
   submitData.value = enterFromList.map((item) => {
