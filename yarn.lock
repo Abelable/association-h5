@@ -5295,6 +5295,18 @@ websocket-extensions@>=0.1.1:
   resolved "https://registry.npmmirror.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
   integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
+weixin-js-sdk-ts@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/weixin-js-sdk-ts/-/weixin-js-sdk-ts-1.6.1.tgz#ee5874b3966242b5ab4be1fd5afc90ec553353cd"
+  integrity sha512-nnW5zjmg3JG3d+LsNA9ZK3aEKJ1JUR8UU5le84iXEcgfkjVtW0DAucrv/RPD3VHGDUM/5OD43a3bWoGWxIID0A==
+  dependencies:
+    weixin-js-sdk "^1.6.0"
+
+weixin-js-sdk@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/weixin-js-sdk/-/weixin-js-sdk-1.6.0.tgz#ff50484d8118ce1208f11248cf4a1c0831577514"
+  integrity sha512-3IYQH7aalJGFJrwdT3epvTdR1MboMiH7vIZ5BRL2eYOJ12BNah7csoMkmSZzkq1+l92sSq29XdTCVjCJoK2sBQ==
+
 whatwg-fetch@^3.6.2:
   version "3.6.2"
   resolved "https://registry.npmmirror.com/whatwg-fetch/-/whatwg-fetch-3.6.2.tgz#dced24f37f2624ed0281725d51d0e2e3fe677f8c"

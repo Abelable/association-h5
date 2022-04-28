@@ -1,6 +1,6 @@
 <template>
-  <NavBar :title="activityDetail?.title" fixed />
-  <div class="form-wrap">
+  <NavBar v-if="navBarVisible" :title="activityDetail?.title" fixed />
+  <div class="form-wrap" :class="{ 'show-navbar': navBarVisible }">
     <div
       class="form-item"
       v-for="(item, index) in activityDetail?.enterFromList"
@@ -85,9 +85,10 @@ import {
   Checkbox,
   Uploader,
 } from "vant";
+
+import wx from "weixin-js-sdk-ts";
 import _ from "lodash";
 import { getUrlParam } from "@/utils";
-
 import {
   ActivityInfo,
   enterFromItem,
@@ -97,10 +98,16 @@ import {
 } from "../service/customActivity";
 
 const id = getUrlParam("id");
+const navBarVisible = ref(false);
 const activityDetail = ref<ActivityInfo>();
 const submitData = ref<{ title: string; name: string; value: any }[]>([]);
 
-onMounted(() => setActivityDetail());
+onMounted(() => {
+  wx.miniProgram.getEnv((res: any) => {
+    if (!res.miniprogram) navBarVisible.value = true;
+  });
+  setActivityDetail();
+});
 
 const setActivityDetail = async () => {
   Toast.loading({ message: "加载中..." });
@@ -175,9 +182,10 @@ const submit = async () => {
 
 <style lang="stylus" scoped>
 .form-wrap
-  margin-top: 46px
   min-height: 10vh
   background: #fff
+  &.show-navbar
+    margin-top: 46px
   .form-item
     padding: .24rem .36rem
     font-size: 0
