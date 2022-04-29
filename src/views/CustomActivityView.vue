@@ -199,7 +199,10 @@ const submit = async () => {
     if ((cloneEnterFromList as enterFromItem[])[index].type === 5) {
       cloneSubmitData[index].value = cloneSubmitData[index].value.join();
     }
-    if ((cloneEnterFromList as enterFromItem[])[index].type === 6) {
+    if (
+      (cloneEnterFromList as enterFromItem[])[index].type === 6 &&
+      cloneSubmitData[index].value
+    ) {
       const [url = ""] =
         (await uploadFile(cloneSubmitData[index].value[0].content)) || [];
       cloneSubmitData[index].value = url;
