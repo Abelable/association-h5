@@ -72,7 +72,7 @@
       <img class="empty-bg" src="@/assets/images/empty.png" alt="" />
       <div>活动已结束</div>
     </div>
-    <div class="submit-btn" @click="submit">提交</div>
+    <div class="submit-btn" v-if="!isEmpty" @click="submit">提交</div>
     <div class="remark" v-if="activityDetail?.remark">
       <div class="title">填表须知</div>
       <div class="content" v-html="activityDetail?.remark"></div>
@@ -361,7 +361,7 @@ const reapply = () => {
     background: linear-gradient(180deg, #3FABFB 0%, #317BFF 100%)
     border-radius: .45rem
 .empty-illus
-  padding: 4.5rem 0
+  padding: 5.8rem 0
   color: #999
   font-size: .24rem
   text-align: center
