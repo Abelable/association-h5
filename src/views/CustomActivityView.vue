@@ -1,7 +1,11 @@
 <template>
   <NavBar v-if="navBarVisible" :title="activityDetail?.title" fixed />
   <div v-if="step === 1">
-    <div class="form-wrap" :class="{ 'show-navbar': navBarVisible }">
+    <div
+      class="form-wrap"
+      v-if="!isEmpty"
+      :class="{ 'show-navbar': navBarVisible }"
+    >
       <div
         class="form-item"
         v-for="(item, index) in activityDetail?.enterFromList"
@@ -64,6 +68,10 @@
         />
       </div>
     </div>
+    <div class="empty-illus" v-if="isEmpty">
+      <img class="empty-bg" src="@/assets/images/empty.png" alt="" />
+      <div>活动已结束</div>
+    </div>
     <div class="submit-btn" @click="submit">提交</div>
     <div class="remark" v-if="activityDetail?.remark">
       <div class="title">填表须知</div>
@@ -111,6 +119,7 @@ import {
 
 const id = getUrlParam("id");
 const navBarVisible = ref(true);
+const isEmpty = ref(false);
 const step = ref(1);
 const errMsg = ref("");
 const activityDetail = ref<ActivityInfo>();
@@ -120,7 +129,11 @@ onMounted(() => setActivityDetail());
 
 const setActivityDetail = async () => {
   Toast.loading({ message: "加载中..." });
-  const { enter_from_json, title, ...resData } = await getActivityDetail(id);
+  const { enter_from_json, title, ...resData } =
+    (await getActivityDetail(id)) || {};
+  if (!enter_from_json) {
+    isEmpty.value = true;
+  }
   wx.miniProgram.getEnv((res) => {
     if (res.miniprogram) {
       navBarVisible.value = false;
@@ -347,6 +360,15 @@ const reapply = () => {
     line-height: .9rem
     background: linear-gradient(180deg, #3FABFB 0%, #317BFF 100%)
     border-radius: .45rem
+.empty-illus
+  padding: 4.5rem 0
+  color: #999
+  font-size: .24rem
+  text-align: center
+  background: #fff
+  .empty-bg
+    width: 3rem
+    height: 3rem
 </style>
 <style lang="stylus">
 .van-nav-bar__content

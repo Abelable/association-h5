@@ -32,8 +32,12 @@ export const http = async (
     .fetch(`${endpoint.includes("v4") ? youboUrl : apiUrl}${endpoint}`, config)
     .then(async (response) => {
       const data = await response.json();
-      if (response.ok && (data.code === 1001 || data.code === "200"))
-        return data.data;
-      else return Promise.reject(data);
+      if (response.ok) {
+        if (data.code === 1001 || data.code === "200") {
+          return data.data;
+        } else {
+          return data;
+        }
+      } else return Promise.reject(data);
     });
 };
