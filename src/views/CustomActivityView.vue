@@ -1,96 +1,103 @@
 <template>
   <NavBar v-if="navBarVisible" :title="activityDetail?.title" fixed />
-  <div v-if="step === 1">
-    <div
-      class="form-wrap"
-      v-if="!isEmpty"
-      :class="{ 'show-navbar': navBarVisible }"
-    >
+  <div class="container">
+    <div v-if="step === 1">
       <div
-        class="form-item"
-        v-for="(item, index) in activityDetail?.enterFromList"
-        :key="index"
+        class="form-wrap"
+        v-if="!isEmpty"
+        :class="{ 'show-navbar': navBarVisible }"
       >
-        <div class="title" :class="{ required: item.required }">
-          <span>{{ item.name }}</span>
-          <span v-if="item.type === 5">（可多选）</span>
+        <div
+          class="form-item"
+          v-for="(item, index) in activityDetail?.enterFromList"
+          :key="index"
+        >
+          <div class="title" :class="{ required: item.required }">
+            <span>{{ item.name }}</span>
+            <span v-if="item.type === 5">（可多选）</span>
+          </div>
+          <input
+            class="input"
+            v-if="item.type === 1"
+            v-model="submitData[index].value"
+            :placeholder="`请输入${item.name}`"
+          />
+          <textarea
+            class="textarea"
+            v-if="item.type === 2"
+            v-model="submitData[index].value"
+            :placeholder="`请输入${item.name}`"
+          />
+          <input
+            class="input"
+            type="number"
+            v-if="item.type === 3"
+            v-model="submitData[index].value"
+            :placeholder="`请输入${item.name}`"
+          />
+          <RadioGroup
+            class="radio-group"
+            v-if="item.type === 4"
+            v-model="submitData[index].value"
+          >
+            <Radio
+              class="radio"
+              v-for="(_item, _index) in item.options"
+              :key="_index"
+              :name="_item"
+              >{{ _item }}</Radio
+            >
+          </RadioGroup>
+          <CheckboxGroup
+            class="checkbox-group"
+            v-if="item.type === 5"
+            v-model="submitData[index].value"
+          >
+            <Checkbox
+              class="checkbox"
+              v-for="(_item, _index) in item.options"
+              :key="_index"
+              :name="_item"
+              >{{ _item }}</Checkbox
+            >
+          </CheckboxGroup>
+          <Uploader
+            class="uploader"
+            v-model="submitData[index].value"
+            v-if="item.type === 6"
+            max-count="1"
+          />
         </div>
-        <input
-          class="input"
-          v-if="item.type === 1"
-          v-model="submitData[index].value"
-          :placeholder="`请输入${item.name}`"
-        />
-        <textarea
-          class="textarea"
-          v-if="item.type === 2"
-          v-model="submitData[index].value"
-          :placeholder="`请输入${item.name}`"
-        />
-        <input
-          class="input"
-          type="number"
-          v-if="item.type === 3"
-          v-model="submitData[index].value"
-          :placeholder="`请输入${item.name}`"
-        />
-        <RadioGroup
-          class="radio-group"
-          v-if="item.type === 4"
-          v-model="submitData[index].value"
-        >
-          <Radio
-            class="radio"
-            v-for="(_item, _index) in item.options"
-            :key="_index"
-            :name="_item"
-            >{{ _item }}</Radio
-          >
-        </RadioGroup>
-        <CheckboxGroup
-          class="checkbox-group"
-          v-if="item.type === 5"
-          v-model="submitData[index].value"
-        >
-          <Checkbox
-            class="checkbox"
-            v-for="(_item, _index) in item.options"
-            :key="_index"
-            :name="_item"
-            >{{ _item }}</Checkbox
-          >
-        </CheckboxGroup>
-        <Uploader
-          class="uploader"
-          v-model="submitData[index].value"
-          v-if="item.type === 6"
-          max-count="1"
-        />
+      </div>
+      <div class="empty-illus" v-if="isEmpty">
+        <img class="empty-bg" src="@/assets/images/empty.png" alt="" />
+        <div>活动已结束</div>
+      </div>
+      <div class="submit-btn" v-if="!isEmpty" @click="submit">提交</div>
+      <div
+        class="remark"
+        v-if="
+          activityDetail?.remark && activityDetail?.remark !== '<p><br></p>'
+        "
+      >
+        <div class="title">填表须知</div>
+        <div class="content" v-html="activityDetail?.remark"></div>
       </div>
     </div>
-    <div class="empty-illus" v-if="isEmpty">
-      <img class="empty-bg" src="@/assets/images/empty.png" alt="" />
-      <div>活动已结束</div>
+    <div class="success" v-if="step === 2">
+      <img class="icon" src="@/assets/images/success.png" alt="" />
+      <div class="icon-desc">报名成功</div>
+      <div class="continue-btn" @click="reapply">继续报名</div>
     </div>
-    <div class="submit-btn" v-if="!isEmpty" @click="submit">提交</div>
-    <div class="remark" v-if="activityDetail?.remark">
-      <div class="title">填表须知</div>
-      <div class="content" v-html="activityDetail?.remark"></div>
-    </div>
-    <div class="youbo-logo-wrap">
-      <img class="youbo-logo" src="@/assets/images/youbo-logo.png" />
-      <div class="youbo-logo-tips">有播提供技术支持</div>
+    <div class="error" v-if="step === 3">
+      <img class="icon" src="@/assets/images/error.png" alt="" />
+      <div class="icon-desc">报名失败</div>
+      <div class="tips">{{ errMsg }}</div>
     </div>
   </div>
-  <div class="success" v-if="step === 2">
-    <img class="icon" src="@/assets/images/success.png" alt="" />
-    <div class="icon-desc">报名成功</div>
-    <div class="continue-btn" @click="reapply">继续报名</div>
-  </div>
-  <div class="error" v-if="step === 3">
-    <img class="icon" src="@/assets/images/error.png" alt="" />
-    <div class="icon-desc">报名失败</div>
-    <div class="tips">{{ errMsg }}</div>
+  <div class="cxxq-logo-wrap">
+    <img class="cxxq-logo" src="@/assets/images/cxxq-logo.png" />
+    <div class="cxxq-logo-tips">诚信星球提供技术支持</div>
   </div>
 </template>
 
@@ -242,6 +249,8 @@ const reapply = () => {
 </script>
 
 <style lang="stylus" scoped>
+.container
+  min-height: calc(100vh - 2.4rem);
 .form-wrap
   min-height: 10vh
   background: #fff
@@ -319,15 +328,16 @@ const reapply = () => {
     padding: .30rem
     font-size: .28rem
     background: #fff
-.youbo-logo-wrap
+.cxxq-logo-wrap
   padding: .30rem 0
   font-size: 0
   text-align: center
-  .youbo-logo
-    width: 1.20rem
-    height: .28rem
-  .youbo-logo-tips
-    margin-top: .06rem
+  .cxxq-logo
+    margin-left: -0.16rem;
+    margin-bottom: -0.04rem;
+    width: 1.86rem
+    height: .73rem
+  .cxxq-logo-tips
     color: #999
     font-size: .18rem
 .success, .error
