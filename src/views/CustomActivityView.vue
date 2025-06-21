@@ -250,7 +250,7 @@ const reapply = () => {
 
 <style lang="stylus" scoped>
 .container
-  min-height: calc(100vh - 2.4rem);
+  min-height: calc(100vh - 3.2rem);
 .form-wrap
   min-height: 10vh
   background: #fff
