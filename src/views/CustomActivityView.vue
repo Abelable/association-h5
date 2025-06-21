@@ -374,7 +374,9 @@ const reapply = () => {
 .van-nav-bar__content
   background: linear-gradient(180deg, #3FABFB 0%, #317BFF 100%)
   .van-nav-bar__title.van-ellipsis
+    max-width: 100%
     color: #fff
+    font-size: 0.24rem
 img
   width: 100%
 </style>
